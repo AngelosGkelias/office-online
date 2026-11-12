@@ -383,6 +383,8 @@ class OneDriveServiceTests(TemporaryEnvironment):
         self.assertIn("--reauth", argv[0])
         self.assertFalse(kwargs["shell"])
         self.assertEqual(kwargs["timeout"], service.setup_timeout)
+        profile = (self.paths.onedrive_config_dir / "config").read_text()
+        self.assertIn(f'sync_dir = "{self.paths.drive_dir}"\n', profile)
 
 
 if __name__ == "__main__":

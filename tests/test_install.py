@@ -224,6 +224,8 @@ class InstallTests(InstallFixture):
         self.assertEqual(stat.S_IMODE(paths.native_launcher.stat().st_mode), 0o755)
         self.assertEqual(stat.S_IMODE(paths.config_file.stat().st_mode), 0o600)
         self.assertFalse(paths.service_file.exists())
+        profile = (paths.config_dir / "onedrive" / "config").read_text()
+        self.assertIn(f'sync_dir = "{paths.data_dir / "drive"}"\n', profile)
 
         launcher_text = paths.launcher.read_text(encoding="utf-8")
         native_text = paths.native_launcher.read_text(encoding="utf-8")
@@ -413,6 +415,8 @@ class InstallTests(InstallFixture):
             ).is_file()
         )
         self.assertTrue((xdg_config / "office-online" / "config.json").is_file())
+        profile = (xdg_config / "office-online" / "onedrive" / "config").read_text()
+        self.assertIn(f'sync_dir = "{xdg_data / "office-online" / "drive"}"\n', profile)
         self.assertTrue(
             (
                 xdg_data

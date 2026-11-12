@@ -319,7 +319,7 @@ class OneDriveService:
         """
 
         self.binary_path()
-        ensure_quiet_profile(self.config_dir)
+        ensure_quiet_profile(self.config_dir, sync_dir=self.drive_dir)
         ensure_private_dir(self.drive_dir)
         argv = self.setup_command()
         LOGGER.info("starting OneDrive authentication-only setup")

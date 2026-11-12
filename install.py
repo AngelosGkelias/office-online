@@ -896,7 +896,7 @@ def install(
 
     _ensure_dir(paths.config_dir, 0o700)
     _ensure_dir(paths.data_dir, 0o700)
-    ensure_quiet_profile(paths.config_dir / "onedrive")
+    ensure_quiet_profile(paths.config_dir / "onedrive", sync_dir=paths.data_dir / "drive")
     for spec in specs:
         _write_atomic(spec.path, spec.content, spec.mode)
     _write_atomic(paths.config_file, config_text, config_mode)

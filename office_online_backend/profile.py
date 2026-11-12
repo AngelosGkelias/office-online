@@ -15,8 +15,16 @@ QUIET_SETTINGS = {
 }
 
 
-def ensure_quiet_profile(directory: Path) -> None:
-    """Preserve other options; suppress OneDrive UI and update reminders."""
+def ensure_quiet_profile(directory: Path, *, sync_dir: Path | None = None) -> None:
+    """Set app options, including a sync root matching the CLI override.
+
+    OneDrive compares ``--syncdir`` against the config file's ``sync_dir``
+    (or its default ~/OneDrive), even on a fresh profile. Persist the app's
+    root so its normal scoped commands do not demand a resync on every run.
+    """
+    settings = dict(QUIET_SETTINGS)
+    if sync_dir is not None:
+        settings["sync_dir"] = str(Path(sync_dir).absolute())
     directory = Path(directory)
     ensure_private_dir(directory)
     path = directory / "config"
@@ -27,13 +35,13 @@ def ensure_quiet_profile(directory: Path) -> None:
     lines = []
     for line in original.splitlines(keepends=True):
         match = re.match(r"^\s*([a-z_]+)\s*=", line)
-        if match and match.group(1) in QUIET_SETTINGS:
+        if match and match.group(1) in settings:
             continue
         lines.append(line)
     content = "".join(lines)
     if content and not content.endswith("\n"):
         content += "\n"
-    content += "".join(f'{key} = "{value}"\n' for key, value in QUIET_SETTINGS.items())
+    content += "".join(f'{key} = "{value}"\n' for key, value in settings.items())
     if content == original:
         return
     fd, temporary = tempfile.mkstemp(prefix=".quiet-", dir=directory)

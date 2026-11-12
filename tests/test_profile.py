@@ -5,6 +5,22 @@ from office_online_backend.profile import ensure_quiet_profile
 
 
 class QuietProfileTests(unittest.TestCase):
+    def test_app_sync_root_is_persisted_once_and_matches_cli(self):
+        with tempfile.TemporaryDirectory() as root:
+            directory = Path(root) / 'profile'
+            directory.mkdir()
+            path = directory / 'config'
+            path.write_text('# keep this\nsync_dir = "/old/root"\nsync_dir = "/duplicate"\n')
+            drive = Path(root) / 'app data' / 'drive'
+            ensure_quiet_profile(directory, sync_dir=drive)
+            result = path.read_text()
+            self.assertIn('# keep this\n', result)
+            self.assertEqual(result.count('sync_dir ='), 1)
+            self.assertIn(f'sync_dir = "{drive}"\n', result)
+            stamp = path.stat().st_mtime_ns
+            ensure_quiet_profile(directory, sync_dir=drive)
+            self.assertEqual(path.stat().st_mtime_ns, stamp)
+
     def test_preserves_other_settings_and_is_idempotent(self):
         with tempfile.TemporaryDirectory() as root:
             directory = Path(root) / 'app-profile'

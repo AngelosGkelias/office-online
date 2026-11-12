@@ -217,6 +217,10 @@ journalctl --user -u office-online.service -n 50 --no-pager
   manifests, then reload the extension. Its ID must match the app configuration.
 - **Sign-in or upload fails:** rerun `office-online setup` and check account policy,
   network access, and OneDrive storage availability.
+- **Upload demands `--resync` immediately after setup:** rerun `./install.sh`
+  from an updated checkout. The dedicated OneDrive configuration must contain
+  the app's working folder as `sync_dir`, matching the helper's `--syncdir`.
+  A missing value can trigger this error even on a fresh profile.
 - **Conflict:** compare the original with the separately saved cloud result.
   Cleanup deliberately leaves unresolved conflicts alone.
 - **No uploader window:** check GTK4/PyGObject availability. Uploading can continue
