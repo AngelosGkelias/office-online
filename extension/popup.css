@@ -1,0 +1,448 @@
+:root {
+  color-scheme: light dark;
+  --bg: #f5f7fb;
+  --surface: #ffffff;
+  --surface-soft: #eef2f8;
+  --text: #152033;
+  --muted: #5d6b80;
+  --border: #dce3ed;
+  --accent: #2563eb;
+  --accent-strong: #1d4ed8;
+  --accent-soft: #e8efff;
+  --ok: #13795b;
+  --ok-soft: #e3f5ee;
+  --warn: #9a5b00;
+  --warn-soft: #fff3da;
+  --error: #b42318;
+  --error-soft: #ffebe8;
+  --pending: #5d6b80;
+  --pending-soft: #edf1f7;
+  --shadow: 0 1px 2px rgba(21, 32, 51, 0.06), 0 8px 20px rgba(21, 32, 51, 0.04);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #11151c;
+    --surface: #1a202a;
+    --surface-soft: #232b37;
+    --text: #edf1f7;
+    --muted: #a1adbe;
+    --border: #303947;
+    --accent: #6b9bff;
+    --accent-strong: #8cb2ff;
+    --accent-soft: #24334f;
+    --ok: #58d4a8;
+    --ok-soft: #173a2f;
+    --warn: #f0bd6a;
+    --warn-soft: #3d2f17;
+    --error: #ff9b91;
+    --error-soft: #43201f;
+    --pending: #a1adbe;
+    --pending-soft: #26303d;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 20px rgba(0, 0, 0, 0.2);
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+}
+
+body {
+  width: 382px;
+  max-height: 560px;
+  overflow-y: auto;
+  background:
+    radial-gradient(circle at 100% -10%, rgba(37, 99, 235, 0.1), transparent 42%),
+    var(--bg);
+  color: var(--text);
+  font: 13px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 13px 15px 10px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.brand-mark {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: linear-gradient(145deg, var(--accent), #7c3aed);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.28);
+  flex: 0 0 auto;
+}
+
+.brand-glyph {
+  position: relative;
+  width: 15px;
+  height: 19px;
+  border: 2px solid #ffffff;
+  border-radius: 3px;
+}
+
+.brand-glyph::before,
+.brand-glyph::after {
+  content: "";
+  position: absolute;
+  left: 2px;
+  width: 7px;
+  height: 2px;
+  border-radius: 999px;
+  background: #ffffff;
+}
+
+.brand-glyph::before {
+  top: 4px;
+}
+
+.brand-glyph::after {
+  top: 9px;
+}
+
+.brand-text {
+  min-width: 0;
+}
+
+.brand-text h1 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 680;
+  letter-spacing: -0.01em;
+}
+
+.brand-text p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.icon-button {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.icon-button:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.icon-button.is-loading {
+  animation: spin 900ms linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .icon-button.is-loading {
+    animation: none;
+  }
+}
+
+.connection {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0 15px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  margin-top: 5px;
+  border-radius: 50%;
+  background: var(--pending);
+  flex: 0 0 auto;
+}
+
+.connection--ok .status-dot {
+  background: var(--ok);
+  box-shadow: 0 0 0 3px var(--ok-soft);
+}
+
+.connection--warn .status-dot {
+  background: var(--warn);
+  box-shadow: 0 0 0 3px var(--warn-soft);
+}
+
+.connection--error .status-dot {
+  background: var(--error);
+  box-shadow: 0 0 0 3px var(--error-soft);
+}
+
+.connection--pending .status-dot {
+  background: var(--pending);
+  box-shadow: 0 0 0 3px var(--pending-soft);
+}
+
+.connection-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.connection-text strong {
+  font-size: 11.5px;
+  font-weight: 650;
+}
+
+.connection-text span {
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.banner {
+  margin: 10px 15px 0;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  font-size: 11.5px;
+  overflow-wrap: anywhere;
+}
+
+.banner--error {
+  border-color: color-mix(in srgb, var(--error) 30%, var(--border));
+  background: var(--error-soft);
+  color: var(--error);
+}
+
+.banner--success {
+  border-color: color-mix(in srgb, var(--ok) 30%, var(--border));
+  background: var(--ok-soft);
+  color: var(--ok);
+}
+
+.content {
+  padding: 12px 15px 6px;
+}
+
+.session-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.session-card {
+  padding: 10px 11px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.session-card--queued {
+  border-style: dashed;
+  background: var(--surface-soft);
+}
+
+.session-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.session-name {
+  overflow: hidden;
+  min-width: 0;
+  flex: 1;
+  font-size: 12.5px;
+  font-weight: 650;
+  letter-spacing: -0.005em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.status-pill {
+  flex: 0 0 auto;
+  padding: 2px 6px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 650;
+  letter-spacing: 0.005em;
+  white-space: nowrap;
+}
+
+.status-pill--ok {
+  background: var(--ok-soft);
+  color: var(--ok);
+}
+
+.status-pill--pending {
+  background: var(--pending-soft);
+  color: var(--pending);
+}
+
+.status-pill--warn {
+  background: var(--warn-soft);
+  color: var(--warn);
+}
+
+.status-pill--error {
+  background: var(--error-soft);
+  color: var(--error);
+}
+
+.status-pill--neutral {
+  background: var(--pending-soft);
+  color: var(--muted);
+}
+
+.session-path {
+  display: -webkit-box;
+  overflow: hidden;
+  margin-top: 3px;
+  color: var(--muted);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 10.5px;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.session-error {
+  margin: 5px 0 0;
+  color: var(--error);
+  font-size: 11px;
+  overflow-wrap: anywhere;
+}
+
+.session-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  margin-top: 5px;
+  color: var(--muted);
+  font-size: 10.5px;
+}
+
+.meta-item {
+  overflow: hidden;
+  max-width: 100%;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.meta-badge {
+  padding: 1px 5px;
+  border-radius: 5px;
+  background: var(--pending-soft);
+  color: var(--pending);
+  font-weight: 600;
+}
+
+.session-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.button {
+  min-height: 26px;
+  padding: 4px 9px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: 11px;
+  font-weight: 620;
+  cursor: pointer;
+}
+
+.button:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.button--primary {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #ffffff;
+}
+
+.button--primary:hover:not(:disabled) {
+  border-color: var(--accent-strong);
+  background: var(--accent-strong);
+  color: #ffffff;
+}
+
+.button:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+
+@media (prefers-color-scheme: dark) {
+  .button--primary {
+    color: #0e1520;
+  }
+}
+
+.empty {
+  padding: 18px 8px 20px;
+  text-align: center;
+}
+
+.empty-title {
+  margin: 0;
+  font-size: 12.5px;
+  font-weight: 650;
+}
+
+.empty-copy {
+  margin: 5px auto 0;
+  max-width: 290px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.app-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 15px 11px;
+  color: var(--muted);
+  font-size: 10px;
+}

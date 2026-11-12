@@ -1,0 +1,33 @@
+{
+  "manifest_version": 3,
+  "name": "Office Online Local",
+  "version": "1.0.0",
+  "description": "Track local Office documents opened through Office Online and save copies back to this computer.",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA23iPajIBbZdqWJzYpNlIAX9+LVrcVzOa7ItJiYsnI5tKa4qOQ8mYzUdq3k/CjpJrr4Ibvwnb7K5DTJC9hXGHp5Bfs2MEckVeJdtak7GwaWDN8NE6uA97kGwgzSypUDrVJo2sYlQvzsobphK0vdRUgq6dno1pcnDLkDMC5fZp0+QhMiqUUSKU6xcj5QM/sA8bS0tesegM7RCUv5ut2cGgepggUXJKAPeA0SlaN6/tFXEWWYXR5td/VjTpNaqs1DV1Tv3eQ2Ly79dHdE6nkjrf1K7wKc5iVzQXmqYjOMA4H0lqnA3KBDd9AP5yxfF4MFmii17vN+Ut23kPYa/2gwSxhwIDAQAB",
+  "minimum_chrome_version": "116",
+  "permissions": [
+    "nativeMessaging",
+    "storage",
+    "alarms"
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_title": "Office Online Local",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

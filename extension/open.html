@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Opening document — Office Online Local</title>
+    <link rel="stylesheet" href="open.css" />
+  </head>
+  <body>
+    <main class="bridge-card">
+      <header class="bridge-header">
+        <span class="bridge-mark" aria-hidden="true"><span class="bridge-glyph"></span></span>
+        <div>
+          <p class="eyebrow">Office Online Local</p>
+          <p class="bridge-subtitle">Local document bridge</p>
+        </div>
+      </header>
+
+      <section class="bridge-body" aria-live="polite">
+        <div id="spinner" class="spinner" aria-hidden="true"></div>
+        <h1 id="bridge-title">Opening document</h1>
+        <p id="bridge-message" class="bridge-message">Waiting for the local Office Online service…</p>
+        <p id="bridge-session" class="bridge-session"></p>
+        <button id="retry" class="button button--primary" type="button" hidden>Retry</button>
+      </section>
+
+      <footer class="bridge-footer">
+        This page is replaced by the Microsoft Office editor when the document is ready.
+      </footer>
+    </main>
+    <script type="module" src="open.js"></script>
+  </body>
+</html>

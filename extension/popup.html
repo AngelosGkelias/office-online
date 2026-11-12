@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Office Online Local</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <header class="app-header">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true"><span class="brand-glyph"></span></span>
+        <div class="brand-text">
+          <h1>Office Online</h1>
+          <p>Local session tracker</p>
+        </div>
+      </div>
+      <button id="refresh" class="icon-button" type="button" title="Refresh status" aria-label="Refresh status">&#8635;</button>
+    </header>
+
+    <div id="connection" class="connection connection--pending" role="status">
+      <span class="status-dot" aria-hidden="true"></span>
+      <span class="connection-text">
+        <strong id="connection-label">Connecting</strong>
+        <span id="connection-detail">Waiting for the local Office Online service</span>
+      </span>
+    </div>
+
+    <div id="banner" class="banner" role="status" hidden></div>
+
+    <main class="content">
+      <ul id="session-list" class="session-list" aria-label="Tracked documents"></ul>
+      <div id="empty" class="empty" hidden>
+        <p class="empty-title">No tracked documents</p>
+        <p class="empty-copy">Open a DOCX, PPTX, or XLSX through the Office Online CLI to start a tracked editing session.</p>
+      </div>
+    </main>
+
+    <footer class="app-footer">
+      <span>Local bridge</span>
+      <span id="version"></span>
+    </footer>
+
+    <script type="module" src="popup.js"></script>
+  </body>
+</html>

@@ -1,0 +1,33 @@
+# Office Online local integration contract
+
+Project root: the repository checkout. Python 3 stdlib backend, Chrome MV3 extension, Nautilus 4 provider. User account install, no root required for app. OneDrive abraunegg client is a dependency. Use isolated config and sync root; never touch user's normal OneDrive configuration. Inspired by Fmstrat/loffice-365; new code, working copies, normal Chrome, save-back backup/conflict protection.
+
+## CLI
+`python3 office_online.py daemon` independent long-lived user systemd service.
+`python3 office_online.py native-host` Chrome native messaging to daemon proxy.
+`python3 office_online.py open PATH...` validates local DOCX/PPTX/XLSX, calls daemon and exits after opening requested files. Accept file:// local URI. No shell expansion.
+`python3 office_online.py status` JSON status.
+`python3 office_online.py setup` terminal OneDrive authentication for dedicated config (must not synchronize entire drive).
+`python3 office_online.py doctor` offline installation/dependency checks; meaningful exit code.
+
+App config `$XDG_CONFIG_HOME/office-online/config.json`, keys extension_id (32 a-p characters), browser (default google-chrome), onedrive_binary (default onedrive). OneDrive auth/config `$XDG_CONFIG_HOME/office-online/onedrive`. Data `$XDG_DATA_HOME/office-online`, working drive subdir `drive`, persistent sessions `sessions.json`. Socket `$XDG_RUNTIME_DIR/office-online/control.sock` (0700 parent, 0600 socket). Honor XDG overrides for tests. Browser native host name `org.local.office_online`.
+
+## Native and Unix socket protocol
+Socket newline-delimited JSON. Chrome native host converts native 4-byte length frames to socket lines. One persistent socket per native host. No unsolicited responses. Each request has `id` echoed in response. Each response `{id, ok:true, sessions:[...]}` or `{id,ok:false,error:human_message}`. Extension supports asynchronous queued operations by requesting status after changes. Commands:
+- `{id,action:'status'}` returns sessions.
+- `{id,action:'bind',session_id,tab_id}` associates session with this native connection/browser and tab. Returns sessions. tab_id integer.
+- `{id,action:'save',session_id,finish:false}` queues save, keeps editing; finish true queues final save and ends tracking on success.
+- `{id,action:'tab_closed',session_id}` queues final save.
+- `{id,action:'retry',session_id}` retries interrupted/error save.
+- CLI-only `{id,action:'open',paths:[...]}` backend prepares/uploads and opens extension bridge URL. Backend may block that CLI socket while upload occurs; status/native socket must remain responsive.
+Native socket disconnect queues final save for all sessions bound to THAT socket only; background helper outlives browser. On daemon restart pending interrupted saves retry, previously editing sessions require final download/recovery. Retry network failures periodically without deleting session data. Single OneDrive operation at a time. Avoid global lock during subprocess operations.
+
+Session JSON fields: `session_id`, `name`, `original_path`, `url` (Microsoft HTTPS after upload), `state` ('opening','editing','saving','saved','error','conflict'), `tab_id` (nullable), `error` (nullable string), `last_saved_at` (nullable ISO8601), `result_path` (nullable). May have more internal fields.
+
+## Chrome launch and tracking
+Backend opens `chrome-extension://<configured extension_id>/open.html?session=<uuid>` using google-chrome. Extension bridge uses its current tab ID, obtains status until session exists/ready, binds session, stores mapping durably in chrome.storage.local BEFORE redirect to Microsoft URL. No public web-accessible_resources required. No fragile matching of Microsoft redirect URLs. Initial opening URL session must be ready with url before browser spawn. Existing active session for same resolved original path should focus mapped Chrome tab through extension bridge, without duplicate upload. Bridge may check existing mapping and tabs.get, focus existing tab and close bridge; otherwise bind bridge and navigate it.
+
+Native connectNative persistent port keeps MV3 worker alive in modern Chrome. Reconnect carefully; use status on native connect and popup request, tab close event, periodic status while connected. Persist tab mapping. When tabs removed send tab_closed; queue offline closures for reconnect. Browser shutdown fallback socket EOF must save bound sessions even if onRemoved is not emitted. Brief reconnect grace is allowed to avoid transient disconnect ending editing sessions. Browser crash/OS shutdown cannot run tasks until service/session resumes; document.
+
+## Safety / UX
+Use unique session UUID working directory and actual copies (never symlinks). Upload-only no-remote-delete, download-only single-directory narrow scope. Completed session data is retained until an unbound canonical app session under `OfficeOnline/<uuid>` is older than seven days from the final successful save; the daemon then removes only that cloud folder with the OneDrive client's `--remove-directory`, and after confirmation removes the matching local working directory (`drive/OfficeOnline/<uuid>`), backup directory (`backups/<uuid>`), and session history record from `sessions.json` and its `.bak` fallback (checked about 30 seconds after startup and every six hours; `cleanup --dry-run` previews without changes/network). Local targets are fixed from app roots plus the canonical UUID, never from stored paths; symlinked roots/ancestors/targets and targets containing any session original/result are refused. Failed cloud deletion preserves all local data for retry; failed local cleanup keeps `cloud_deleted_at` and retries locally without repeating the cloud deletion. An existing `cloud_deleted_at` marker qualifies for local-only cleanup. Active/errored/conflicted sessions and user originals/results/conflict siblings are never removed; there is no general remote-delete or full-drive sync. Uninstall still retains all app data by default. Local file hash tracked before upload and updated on successful manual save. Back up original before atomic save-back; if changed externally preserve it and write downloaded version as uniquely named sibling. Download failure must not report success or touch original. Manual Save can repeat without ending session. No credentials or full CLI secret output in logs/errors. Show desktop notifications on final successful save, conflict and errors. Don't auto-load Chrome extension or sign in on user's behalf. README real limitations incl Chrome background mode means browser connection may persist after windows close; onRemoved handles closed tabs. Extension install manually in chrome://extensions developer mode.
